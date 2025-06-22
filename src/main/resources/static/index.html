@@ -317,6 +317,7 @@
                 case 'auth_success':
                     showChatStatus('Authentication successful', 'success');
                     requestOnlineUsers();
+                    loadRecentConversations(); // Load recent conversations on login
                     break;
                 case 'message':
                     displayMessage(data.sender, data.content, data.timestamp, false);
@@ -430,6 +431,45 @@
                     li.classList.add('selected');
                 }
             });
+
+            // Load conversation history
+            loadConversationHistory(username);
+        }
+
+        async function loadConversationHistory(recipient) {
+            try {
+                const response = await fetch(`/api/chat/conversation/${currentUsername}/${recipient}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    clearMessages();
+                    data.messages.forEach(msg => {
+                        const isSent = msg.sender === currentUsername;
+                        displayMessage(msg.sender, msg.content, msg.sentAt, isSent);
+                    });
+                } else {
+                    console.error('Failed to load conversation history:', data.error);
+                }
+            } catch (error) {
+                console.error('Error loading conversation history:', error);
+            }
+        }
+
+        async function loadRecentConversations() {
+            try {
+                const response = await fetch(`/api/chat/recent/${currentUsername}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    // You can use this data to show recent conversations in UI
+                    // For now, we'll just log it
+                    console.log('Recent conversations:', data.conversations);
+                } else {
+                    console.error('Failed to load recent conversations:', data.error);
+                }
+            } catch (error) {
+                console.error('Error loading recent conversations:', error);
+            }
         }
 
         function clearMessages() {

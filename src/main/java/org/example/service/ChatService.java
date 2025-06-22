@@ -73,4 +73,12 @@ public class ChatService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    public List<Message> getConversationHistory(String user1, String user2) {
+        return messageRepository.findConversationHistory(user1, user2);
+    }
+
+    public List<Message> getRecentConversations(String username) {
+        return messageRepository.findRecentConversations(username);
+    }
 }

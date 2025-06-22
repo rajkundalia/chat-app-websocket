@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.entity.Message;
 import org.example.service.ChatService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -18,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ChatWebSocketHandler implements WebSocketHandler {
 
+    Logger logger = LoggerFactory.getLogger(ChatWebSocketHandler.class);
+
     private final ChatService chatService;
     private final ObjectMapper objectMapper;
 
@@ -30,8 +34,8 @@ public class ChatWebSocketHandler implements WebSocketHandler {
     }
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println("WebSocket connection established: " + session.getId());
+    public void afterConnectionEstablished(WebSocketSession session) {
+        logger.info("WebSocket connection established: {}", session.getId());
     }
 
     @Override
@@ -75,7 +79,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
             // Broadcast updated online users list
             broadcastOnlineUsers();
 
-            System.out.println("User authenticated: " + username);
+            logger.info("User authenticated: {}", username);
         }
     }
 
@@ -108,7 +112,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
                 chatService.markMessageAsDelivered(message.getId());
             } catch (IOException e) {
                 // If sending fails, message remains undelivered in database
-                System.err.println("Failed to send message to " + recipientUsername + ": " + e.getMessage());
+                logger.error("Failed to send message to {} : exception: {}", recipientUsername, e.getMessage());
                 // Remove inactive session
                 activeSessions.remove(recipientUsername);
             }
@@ -157,7 +161,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         try {
             messageJson = objectMapper.writeValueAsString(message);
         } catch (Exception e) {
-            System.err.println("Failed to serialize online users message");
+            logger.error("Failed to serialize online users message");
             return;
         }
 
@@ -166,20 +170,20 @@ public class ChatWebSocketHandler implements WebSocketHandler {
             try {
                 session.sendMessage(new TextMessage(messageJson));
             } catch (IOException e) {
-                System.err.println("Failed to send online users to " + username);
+                logger.error("Failed to send online users to {}", username);
             }
         });
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-        System.err.println("WebSocket transport error: " + exception.getMessage());
+    public void handleTransportError(WebSocketSession session, Throwable exception) {
+        logger.error("WebSocket transport error: {}", exception.getMessage());
         cleanupSession(session);
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
-        System.out.println("WebSocket connection closed: " + session.getId());
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
+        logger.info("WebSocket connection closed: {}", session.getId());
         cleanupSession(session);
     }
 
@@ -188,7 +192,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         if (username != null) {
             activeSessions.remove(username);
             broadcastOnlineUsers();
-            System.out.println("User disconnected: " + username);
+            logger.info("User disconnected: {}", username);
         }
     }
 
