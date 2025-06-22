@@ -99,4 +99,4 @@ This application demonstrates a complete real-time chat system with robust offli
 2. Refreshing the windows logs you out.
 3. If the user logs out, the other user can send messages until the chat window of the logged out use is selected, 
 after that you cannot select it again.
-4. Add more limitation that you can find of.
+(can be more :))
