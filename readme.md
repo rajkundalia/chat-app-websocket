@@ -73,13 +73,14 @@ A real-time chat application built with Spring Boot and WebSockets that allows u
 
 ## Usage
 
-1. **Start the application**: Run the Spring Boot application
-2. **Access the chat**: Open browser to `http://localhost:8080`
-3. **Register users**: Create multiple user accounts for testing
-4. **Login and chat**: Login with different users in multiple browser tabs/windows
-5. **Test offline messaging**: Close one browser tab, send messages to that user, then reopen to see message delivery
-6. **Message History**: Fetches conversation history for each user
-7. **Monitor database**: Access H2 console at `http://localhost:8080/h2-console` (URL: `jdbc:h2:mem:chatdb`, user: `sa`, password: `password`)
+1. **Build the application**: Clone the code and perform a ```mvn clean isntall```.
+2. **Start the application**: Run the Spring Boot application - ```mvn spring-boot:run```
+3. **Access the chat**: Open browser to `http://localhost:8080`
+4. **Register users**: Create multiple user accounts for testing
+5. **Login and chat**: Login with different users in multiple browser tabs/windows
+6. **Test offline messaging**: Close one browser tab, send messages to that user, then reopen to see message delivery
+7. **Message History**: Fetches conversation history for each user
+8. **Monitor database**: Access H2 console at `http://localhost:8080/h2-console` (URL: `jdbc:h2:mem:chatdb`, user: `sa`, password: `password`)
 
 
 ## Interesting Points:
@@ -99,4 +100,5 @@ This application demonstrates a complete real-time chat system with robust offli
 2. Refreshing the windows logs you out.
 3. If the user logs out, the other user can send messages until the chat window of the logged out use is selected, 
 after that you cannot select it again.
-4. Add more limitation that you can find of.
+
+(can be more :))
